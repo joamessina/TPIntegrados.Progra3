@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<h1><%= producto ? 'Editar Producto' : 'Nuevo Producto' %></h1>
+<form action="<%= action %>" method="POST">
+  <label>Nombre: <input type="text" name="nombre" value="<%= producto ? producto.nombre : '' %>" required></label><br>
+  <label>Descripción: <textarea name="descripcion"><%= producto ? producto.descripcion : '' %></textarea></label><br>
+  <label>Tipo:
+    <select name="tipo" required>
+      <option value="Pokemon" <%= producto && producto.tipo === 'Pokemon' ? 'selected' : '' %>>Pokemon</option>
+      <option value="Magic" <%= producto && producto.tipo === 'Magic' ? 'selected' : '' %>>Magic</option>
+    </select>
+  </label><br>
+  <label>Expansión: <input type="text" name="expansion" value="<%= producto ? producto.expansion : '' %>" required></label><br>
+  <label>Precio: <input type="number" step="0.01" name="precio" value="<%= producto ? producto.precio : '' %>" required></label><br>
+   <label>Imagen: 
+    <input type="file" name="imagen" accept="image/*">
+    <% if (producto && producto.imagen) { %>
+      <br>
+      <img src="/images/<%= producto.imagen %>" alt="Imagen actual" style="max-width:120px; display:block; margin-top:6px;">
+    <% } %>
+  </label><br>
+  <button type="submit"><%= producto ? 'Guardar cambios' : 'Agregar' %></button>
+</form>
+
+<a href="/admin/dashboard" class="btn">Volver al dashboard</a>
+
+<%- include('partials/footer') %>
