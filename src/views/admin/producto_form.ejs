@@ -2,7 +2,7 @@
 <%- include('partials/navbar') %>
 
 <h1><%= producto ? 'Editar Producto' : 'Nuevo Producto' %></h1>
-<form action="<%= action %>" method="POST">
+<form action="<%= action %>" method="POST" enctype="multipart/form-data">
   <label>Nombre: <input type="text" name="nombre" value="<%= producto ? producto.nombre : '' %>" required></label><br>
   <label>Descripción: <textarea name="descripcion"><%= producto ? producto.descripcion : '' %></textarea></label><br>
   <label>Tipo:
