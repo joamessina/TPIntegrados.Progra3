@@ -6,6 +6,8 @@ const adminRouter = require('./routes/admin');
 require('./models/associations');
 
 const app = express();
+const apiRoutes = require('./routes/api');
+const authRoutes = require('./routes/auth');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -14,6 +16,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.json());
+app.use('/api', apiRoutes);
+app.use('/api', authRoutes);
 app.use('/admin', adminRouter);
 // Ejemplo de prueba de conexión
 sequelize
