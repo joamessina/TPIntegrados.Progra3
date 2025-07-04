@@ -17,7 +17,7 @@ router.use((req, res, next) => {
 router.get('/dashboard', async (req, res) => {
   const productos = await Producto.findAll({ order: [['id', 'ASC']] });
   const empresa = {
-    nombre: 'Mi Empresa Pro',
+    nombre: 'TCG Shop',
     logo: '/images/empresa_logo.png',
   };
   res.render('admin/dashboard', { productos, empresa });

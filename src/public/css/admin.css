@@ -107,3 +107,12 @@ button:hover {
 a.btn {
   padding: 7px 14px;
 }
+
+/* Header empresa logos */
+.empresa-logo-header {
+  height: 200px !important;
+  max-height: 200px;
+  width: auto !important;
+  margin-left: 6px;
+  margin-right: 6px;
+}
