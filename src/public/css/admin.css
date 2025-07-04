@@ -116,3 +116,13 @@ a.btn {
   margin-left: 6px;
   margin-right: 6px;
 }
+
+/* Forzar texto oscuro en modals de Bootstrap */
+.modal-content,
+.modal-title,
+.modal-body,
+.modal-footer,
+.modal-header {
+  color: #232323 !important;
+  background: #fff !important;
+}

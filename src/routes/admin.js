@@ -54,6 +54,17 @@ router.post('/productos/nuevo', async (req, res) => {
   }
 });
 
+// Formulario de edición de producto (GET)
+router.get('/productos/:id/editar', async (req, res) => {
+  const producto = await Producto.findByPk(req.params.id);
+  if (!producto) return res.redirect('/admin/dashboard');
+  res.render('admin/producto_form', {
+    producto,
+    action: `/admin/productos/${producto.id}/editar`,
+    method: 'POST',
+  });
+});
+
 // Formulario de edición
 router.post('/productos/:id/editar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
@@ -73,32 +84,6 @@ router.post('/productos/:id/editar', async (req, res) => {
   }
 });
 
-// Guardar edición
-router.post(
-  '/productos/:id/editar',
-
-  async (req, res) => {
-    const producto = await Producto.findByPk(req.params.id);
-    if (!producto) return res.redirect('/admin/dashboard');
-    try {
-      const { nombre, descripcion, tipo, expansion, precio } = req.body;
-      let updateData = { nombre, descripcion, tipo, expansion, precio };
-      if (req.file) {
-        updateData.imagen = req.file.filename;
-      }
-      await producto.update(updateData);
-      res.redirect('/admin/dashboard');
-    } catch (err) {
-      res.render('admin/producto_form', {
-        producto: { ...producto.dataValues, ...req.body },
-        action: `/admin/productos/${producto.id}/editar`,
-        method: 'POST',
-        error: err.message,
-      });
-    }
-  }
-);
-
 // Baja lógica
 router.post('/productos/:id/desactivar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
@@ -111,13 +96,6 @@ router.post('/productos/:id/activar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.update({ activo: true });
   res.redirect('/admin/dashboard');
-  res.redirect('/admin/dashboard');
-});
-
-// Eliminar físico (solo para pruebas)
-router.post('/productos/:id/eliminar', async (req, res) => {
-  const producto = await Producto.findByPk(req.params.id);
-  if (producto) await producto.destroy();
   res.redirect('/admin/dashboard');
 });
 
