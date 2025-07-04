@@ -1,8 +1,10 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const upload = require("../utils/multer");
-const { Ventas, Usuario, Producto, VentaProducto } = require("../models");
-const ExcelJS = require("exceljs"); // Descarga Excel de ventas (solo admin)
+const upload = require('../utils/multer');
+const ExcelJS = require('exceljs');
+const Producto = require('../models/Producto');
+
+const { Ventas, Usuario, VentaProducto } = require('../models');
 
 // Middleware de auth test, resta mejorar desp
 router.use((req, res, next) => {
@@ -12,22 +14,26 @@ router.use((req, res, next) => {
 });
 
 // Dashboard: lista de productos
-router.get("/dashboard", async (req, res) => {
-  const productos = await Producto.findAll({ order: [["id", "ASC"]] });
-  res.render("admin/dashboard", { productos });
+router.get('/dashboard', async (req, res) => {
+  const productos = await Producto.findAll({ order: [['id', 'ASC']] });
+  const empresa = {
+    nombre: 'Mi Empresa Pro',
+    logo: '/images/empresa_logo.png',
+  };
+  res.render('admin/dashboard', { productos, empresa });
 });
 
 // Formulario alta de producto
-router.get("/productos/nuevo", (req, res) => {
-  res.render("admin/producto_form", {
+router.get('/productos/nuevo', (req, res) => {
+  res.render('admin/producto_form', {
     producto: null,
-    action: "/admin/productos/nuevo",
-    method: "POST",
+    action: '/admin/productos/nuevo',
+    method: 'POST',
   });
 });
 
 // Crear producto
-router.post("/productos/nuevo", upload.single("imagen"), async (req, res) => {
+router.post('/productos/nuevo', upload.single('imagen'), async (req, res) => {
   try {
     const { nombre, descripcion, tipo, expansion, precio } = req.body;
     const imagen = req.file ? req.file.filename : null;
@@ -39,35 +45,35 @@ router.post("/productos/nuevo", upload.single("imagen"), async (req, res) => {
       precio,
       imagen,
     });
-    res.redirect("/admin/dashboard");
+    res.redirect('/admin/dashboard');
   } catch (err) {
-    res.render("admin/producto_form", {
+    res.render('admin/producto_form', {
       producto: req.body,
-      action: "/admin/productos/nuevo",
-      method: "POST",
+      action: '/admin/productos/nuevo',
+      method: 'POST',
       error: err.message,
     });
   }
 });
 
 // Formulario de edición
-router.get("/productos/:id/editar", async (req, res) => {
+router.get('/productos/:id/editar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
-  if (!producto) return res.redirect("/admin/dashboard");
-  res.render("admin/producto_form", {
+  if (!producto) return res.redirect('/admin/dashboard');
+  res.render('admin/producto_form', {
     producto,
     action: `/admin/productos/${producto.id}/editar`,
-    method: "POST",
+    method: 'POST',
   });
 });
 
 // Guardar edición
 router.post(
-  "/productos/:id/editar",
-  upload.single("imagen"),
+  '/productos/:id/editar',
+  upload.single('imagen'),
   async (req, res) => {
     const producto = await Producto.findByPk(req.params.id);
-    if (!producto) return res.redirect("/admin/dashboard");
+    if (!producto) return res.redirect('/admin/dashboard');
     try {
       const { nombre, descripcion, tipo, expansion, precio } = req.body;
       let updateData = { nombre, descripcion, tipo, expansion, precio };
@@ -75,12 +81,12 @@ router.post(
         updateData.imagen = req.file.filename;
       }
       await producto.update(updateData);
-      res.redirect("/admin/dashboard");
+      res.redirect('/admin/dashboard');
     } catch (err) {
-      res.render("admin/producto_form", {
+      res.render('admin/producto_form', {
         producto: { ...producto.dataValues, ...req.body },
         action: `/admin/productos/${producto.id}/editar`,
-        method: "POST",
+        method: 'POST',
         error: err.message,
       });
     }
@@ -88,28 +94,28 @@ router.post(
 );
 
 // Baja lógica
-router.post("/productos/:id/desactivar", async (req, res) => {
+router.post('/productos/:id/desactivar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.update({ activo: false });
-  res.redirect("/admin/dashboard");
+  res.redirect('/admin/dashboard');
 });
 
 // Alta lógica
-router.post("/productos/:id/activar", async (req, res) => {
+router.post('/productos/:id/activar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.update({ activo: true });
-  res.redirect("/admin/dashboard");
-  res.redirect("/admin/dashboard");
+  res.redirect('/admin/dashboard');
+  res.redirect('/admin/dashboard');
 });
 
 // Eliminar físico (solo para pruebas)
-router.post("/productos/:id/eliminar", async (req, res) => {
+router.post('/productos/:id/eliminar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.destroy();
-  res.redirect("/admin/dashboard");
+  res.redirect('/admin/dashboard');
 });
 
-router.get("/descargar-excel-ventas", async (req, res) => {
+router.get('/descargar-excel-ventas', async (req, res) => {
   try {
     const ventas = await Ventas.findAll({
       include: [
@@ -119,20 +125,20 @@ router.get("/descargar-excel-ventas", async (req, res) => {
     });
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Ventas");
+    const worksheet = workbook.addWorksheet('Ventas');
     worksheet.columns = [
-      { header: "ID Venta", key: "id" },
-      { header: "Cliente", key: "cliente" },
-      { header: "Producto", key: "producto" },
-      { header: "Cantidad", key: "cantidad" },
-      { header: "Fecha", key: "fecha" },
+      { header: 'ID Venta', key: 'id' },
+      { header: 'Cliente', key: 'cliente' },
+      { header: 'Producto', key: 'producto' },
+      { header: 'Cantidad', key: 'cantidad' },
+      { header: 'Fecha', key: 'fecha' },
     ];
 
     ventas.forEach((venta) => {
       venta.Productos.forEach((prod) => {
         worksheet.addRow({
           id: venta.id,
-          cliente: venta.Usuario ? venta.Usuario.username : "",
+          cliente: venta.Usuario ? venta.Usuario.username : '',
           producto: prod.nombre,
           cantidad: prod.VentaProducto.cantidad,
           fecha: venta.createdAt.toISOString().slice(0, 10),
@@ -141,10 +147,10 @@ router.get("/descargar-excel-ventas", async (req, res) => {
     });
 
     res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    res.setHeader("Content-Disposition", "attachment; filename=ventas.xlsx");
+    res.setHeader('Content-Disposition', 'attachment; filename=ventas.xlsx');
     await workbook.xlsx.write(res);
     res.end();
   } catch (err) {
@@ -152,7 +158,7 @@ router.get("/descargar-excel-ventas", async (req, res) => {
   }
 });
 
-router.get("/descargar-excel-ventas", async (req, res) => {
+router.get('/descargar-excel-ventas', async (req, res) => {
   try {
     const ventas = await Ventas.findAll({
       include: [
@@ -162,20 +168,20 @@ router.get("/descargar-excel-ventas", async (req, res) => {
     });
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Ventas");
+    const worksheet = workbook.addWorksheet('Ventas');
     worksheet.columns = [
-      { header: "ID Venta", key: "id" },
-      { header: "Cliente", key: "cliente" },
-      { header: "Producto", key: "producto" },
-      { header: "Cantidad", key: "cantidad" },
-      { header: "Fecha", key: "fecha" },
+      { header: 'ID Venta', key: 'id' },
+      { header: 'Cliente', key: 'cliente' },
+      { header: 'Producto', key: 'producto' },
+      { header: 'Cantidad', key: 'cantidad' },
+      { header: 'Fecha', key: 'fecha' },
     ];
 
     ventas.forEach((venta) => {
       venta.Productos.forEach((prod) => {
         worksheet.addRow({
           id: venta.id,
-          cliente: venta.Usuario ? venta.Usuario.username : "",
+          cliente: venta.Usuario ? venta.Usuario.username : '',
           producto: prod.nombre,
           cantidad: prod.VentaProducto.cantidad,
           fecha: venta.createdAt.toISOString().slice(0, 10),
@@ -184,10 +190,10 @@ router.get("/descargar-excel-ventas", async (req, res) => {
     });
 
     res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    res.setHeader("Content-Disposition", "attachment; filename=ventas.xlsx");
+    res.setHeader('Content-Disposition', 'attachment; filename=ventas.xlsx');
     await workbook.xlsx.write(res);
     res.end();
   } catch (err) {

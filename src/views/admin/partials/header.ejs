@@ -1,9 +1,14 @@
 <head>
-  <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="/public/favicon.ico" />
   <title><%= empresa && empresa.nombre ? empresa.nombre : 'Tienda' %></title>
 </head>
 <body>
-<header>
-  <img src="<%= empresa && empresa.logo ? empresa.logo : '/public/images/logo_empresa.png' %>" alt="logo" style="height:40px;">
-  <span><%= empresa && empresa.nombre ? empresa.nombre : 'Tienda' %></span>
-</header>
+  <header>
+    <img
+      src="<%= empresa && empresa.logo ? empresa.logo : '/public/images/empresa_logo.png' %>"
+      alt="logo"
+      style="height: 40px"
+    />
+    <span><%= empresa && empresa.nombre ? empresa.nombre : 'Tienda' %></span>
+  </header>
+</body>
