@@ -8,7 +8,7 @@
     <div class="alert alert-danger"><%= error %></div>
   <% } %>
 
-  <form action="<%= action %>" method="POST" enctype="multipart/form-data" class="mx-auto" style="max-width: 500px;">
+  <form action="<%= action %>" method="POST" class="mx-auto" style="max-width: 500px;">
     <div class="mb-3">
       <label for="nombre" class="form-label">Nombre</label>
       <input type="text" id="nombre" name="nombre" value="<%= producto ? producto.nombre : '' %>" class="form-control" required>
@@ -32,16 +32,18 @@
       <label for="precio" class="form-label">Precio</label>
       <input type="number" id="precio" name="precio" step="0.01" value="<%= producto ? producto.precio : '' %>" class="form-control" required>
     </div>
-    <div class="mb-3">
-      <label for="imagen" class="form-label">Imagen</label>
-      <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*">
-      <% if (producto && producto.imagen) { %>
-        <div class="mt-2">
-          <span class="text-muted">Imagen actual:</span><br>
-          <img src="/images/<%= producto.imagen %>" alt="Imagen actual" class="img-thumbnail" style="max-width: 150px; margin-top: 6px;">
-        </div>
-      <% } %>
-    </div>
+<div class="mb-3">
+  <label for="imagen" class="form-label">URL de la Imagen</label>
+  <input
+    type="text"
+    class="form-control"
+    id="imagen"
+    name="imagen"
+    value="<%= producto ? producto.imagen : '' %>"
+    placeholder="https://example.com/tuimagen.jpg"
+  />
+</div>
+
     <div class="mb-3 text-center">
       <button type="submit" class="btn btn-success">
         <%= producto ? 'Guardar cambios' : 'Agregar' %>

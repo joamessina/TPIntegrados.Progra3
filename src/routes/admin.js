@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../utils/multer');
 const ExcelJS = require('exceljs');
 const Producto = require('../models/Producto');
 
@@ -33,10 +32,9 @@ router.get('/productos/nuevo', (req, res) => {
 });
 
 // Crear producto
-router.post('/productos/nuevo', upload.single('imagen'), async (req, res) => {
+router.post('/productos/nuevo', async (req, res) => {
   try {
-    const { nombre, descripcion, tipo, expansion, precio } = req.body;
-    const imagen = req.file ? req.file.filename : null;
+    const { nombre, descripcion, tipo, expansion, precio, imagen } = req.body;
     await Producto.create({
       nombre,
       descripcion,
@@ -57,20 +55,28 @@ router.post('/productos/nuevo', upload.single('imagen'), async (req, res) => {
 });
 
 // Formulario de edición
-router.get('/productos/:id/editar', async (req, res) => {
+router.post('/productos/:id/editar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (!producto) return res.redirect('/admin/dashboard');
-  res.render('admin/producto_form', {
-    producto,
-    action: `/admin/productos/${producto.id}/editar`,
-    method: 'POST',
-  });
+  try {
+    const { nombre, descripcion, tipo, expansion, precio, imagen } = req.body;
+    let updateData = { nombre, descripcion, tipo, expansion, precio, imagen };
+    await producto.update(updateData);
+    res.redirect('/admin/dashboard');
+  } catch (err) {
+    res.render('admin/producto_form', {
+      producto: { ...producto.dataValues, ...req.body },
+      action: `/admin/productos/${producto.id}/editar`,
+      method: 'POST',
+      error: err.message,
+    });
+  }
 });
 
 // Guardar edición
 router.post(
   '/productos/:id/editar',
-  upload.single('imagen'),
+
   async (req, res) => {
     const producto = await Producto.findByPk(req.params.id);
     if (!producto) return res.redirect('/admin/dashboard');

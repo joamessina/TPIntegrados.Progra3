@@ -37,12 +37,17 @@
             <% } %>
           </td>
           <td>
-            <% if (p.imagen) { %>
-              <img src="/images/<%= p.imagen %>" alt="Imagen" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+          <% if (p.imagen) { %>
+            <% if (p.imagen.startsWith('http')) { %>
+              <img src="<%= p.imagen %>" alt="Imagen" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
             <% } else { %>
-              <span class="text-muted">(Sin imagen)</span>
+              <img src="/images/<%= p.imagen %>" alt="Imagen" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
             <% } %>
-          </td>
+          <% } else { %>
+            <span class="text-muted">(Sin imagen)</span>
+          <% } %>
+        </td>
+
           <td>
             <a href="/admin/productos/<%= p.id %>/editar" class="btn btn-sm btn-warning me-1 mb-1">Editar</a>
             <% if (p.activo) { %>
