@@ -1,4 +1,5 @@
 const express = require("express");
+const express = require("express");
 const router = express.Router();
 const upload = require("../utils/multer");
 const { Ventas, Usuario, Producto, VentaProducto } = require("../models");
@@ -99,9 +100,11 @@ router.post("/productos/:id/activar", async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.update({ activo: true });
   res.redirect("/admin/dashboard");
+  res.redirect("/admin/dashboard");
 });
 
 // Eliminar físico (solo para pruebas)
+router.post("/productos/:id/eliminar", async (req, res) => {
 router.post("/productos/:id/eliminar", async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.destroy();
@@ -152,3 +155,50 @@ router.get("/descargar-excel-ventas", async (req, res) => {
 });
 
 module.exports = router;
+
+// Descarga Excel de ventas (solo admin)
+const ExcelJS = require("exceljs");
+const { Ventas, Usuario, VentaProducto } = require("../models");
+
+router.get("/descargar-excel-ventas", async (req, res) => {
+  try {
+    const ventas = await Ventas.findAll({
+      include: [
+        { model: Usuario },
+        { model: Producto, through: VentaProducto },
+      ],
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Ventas");
+    worksheet.columns = [
+      { header: "ID Venta", key: "id" },
+      { header: "Cliente", key: "cliente" },
+      { header: "Producto", key: "producto" },
+      { header: "Cantidad", key: "cantidad" },
+      { header: "Fecha", key: "fecha" },
+    ];
+
+    ventas.forEach((venta) => {
+      venta.Productos.forEach((prod) => {
+        worksheet.addRow({
+          id: venta.id,
+          cliente: venta.Usuario ? venta.Usuario.username : "",
+          producto: prod.nombre,
+          cantidad: prod.VentaProducto.cantidad,
+          fecha: venta.createdAt.toISOString().slice(0, 10),
+        });
+      });
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", "attachment; filename=ventas.xlsx");
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
