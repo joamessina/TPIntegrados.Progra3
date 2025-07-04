@@ -1,5 +1,4 @@
 const express = require("express");
-const express = require("express");
 const router = express.Router();
 const upload = require("../utils/multer");
 const { Ventas, Usuario, Producto, VentaProducto } = require("../models");
@@ -105,7 +104,6 @@ router.post("/productos/:id/activar", async (req, res) => {
 
 // Eliminar físico (solo para pruebas)
 router.post("/productos/:id/eliminar", async (req, res) => {
-router.post("/productos/:id/eliminar", async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.destroy();
   res.redirect("/admin/dashboard");
@@ -154,12 +152,6 @@ router.get("/descargar-excel-ventas", async (req, res) => {
   }
 });
 
-module.exports = router;
-
-// Descarga Excel de ventas (solo admin)
-const ExcelJS = require("exceljs");
-const { Ventas, Usuario, VentaProducto } = require("../models");
-
 router.get("/descargar-excel-ventas", async (req, res) => {
   try {
     const ventas = await Ventas.findAll({
@@ -202,3 +194,4 @@ router.get("/descargar-excel-ventas", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+module.exports = router;
