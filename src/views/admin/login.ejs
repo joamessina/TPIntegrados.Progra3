@@ -1,0 +1,36 @@
+<%- include('./partials/header') %>
+<% if (logout) { %>
+  <div class="alert alert-info">Sesión finalizada correctamente.</div>
+<% } %>
+
+<div class="container py-5" style="max-width: 400px;">
+  <h2 class="text-center mb-4">Login Admin</h2>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+  <% } %>
+
+  <form method="POST" action="/admin/login">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" name="email" class="form-control" required autocomplete="username">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" id="password" name="password" class="form-control" required autocomplete="current-password">
+    </div>
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-primary">Ingresar</button>
+      <button type="button" class="btn btn-outline-secondary" onclick="autofill()">Autocompletar admin</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function autofill() {
+    document.getElementById('email').value = 'admin@admin.com';
+    document.getElementById('password').value = '123456';
+  }
+</script>
+
+<%- include('./partials/footer') %>

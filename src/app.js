@@ -8,6 +8,7 @@ const { sequelize } = require('./models');
 const productosRouter = require('./routes/productos');
 const adminRouter = require('./routes/admin');
 const authRoutes = require('./routes/authRoutes');
+const session = require('express-session');
 
 require('./models/associations');
 
@@ -38,6 +39,18 @@ app.use((req, res, next) => {
   };
   next();
 });
+
+//session
+app.use(
+  session({
+    secret: 'ArceusTodoPoderoso', // Cambiá esto por algo único para producción
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 60 * 60 * 1000, // 1 hora (opcional)
+    },
+  })
+);
 
 // Rutas HTML/EJS
 app.use('/admin', adminRouter);
