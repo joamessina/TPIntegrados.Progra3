@@ -1,15 +1,21 @@
-// src/app.js
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
 const { sequelize } = require('./models');
 const productosRouter = require('./routes/productos');
 const adminRouter = require('./routes/admin');
 const authRoutes = require('./routes/authRoutes');
+
 require('./models/associations');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: '*' },
+});
 const PORT = process.env.PORT || 3000;
 
 // Middlewares globales
@@ -36,8 +42,13 @@ app.use((req, res, next) => {
 // Rutas HTML/EJS
 app.use('/admin', adminRouter);
 // Rutas API
-app.use('/api/auth', authRoutes); // Si tienes authRoutes.js
+app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRouter);
+
+// WebSockets
+io.on('connection', (socket) => {
+  console.log('Cliente conectado:', socket.id);
+});
 
 // Test de conexión a DB
 sequelize
@@ -45,14 +56,16 @@ sequelize
   .then(() => console.log('Conectado a MySQL'))
   .catch((err) => console.error('Error de conexión:', err));
 
-// Si necesitas sincronizar modelos (opcional, solo si lo requieres)
+//sincronizar modelos
 sequelize.sync({ alter: false });
 
-// Home o status
+// Home
 app.get('/', (req, res) => {
   res.send('¡Backend funcionando!');
 });
 
-app.listen(PORT, () => {
+module.exports = { app, server, io };
+
+server.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

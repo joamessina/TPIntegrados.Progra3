@@ -88,6 +88,8 @@ router.post('/productos/:id/editar', async (req, res) => {
 router.post('/productos/:id/desactivar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.update({ activo: false });
+  const { io } = require('../app');
+  io.emit('productos-updated');
   res.redirect('/admin/dashboard');
 });
 
@@ -95,7 +97,8 @@ router.post('/productos/:id/desactivar', async (req, res) => {
 router.post('/productos/:id/activar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (producto) await producto.update({ activo: true });
-  res.redirect('/admin/dashboard');
+  const { io } = require('../app');
+  io.emit('productos-updated');
   res.redirect('/admin/dashboard');
 });
 
