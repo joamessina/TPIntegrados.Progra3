@@ -148,7 +148,11 @@ router.get('/descargar-excel-ventas', async (req, res) => {
 
 // Login form
 router.get('/login', requireAdmin, (req, res) => {
-  res.render('admin/login', { error: null, logout: req.query.logout });
+  res.render('admin/login', {
+    error: null,
+    logout: req.query.logout,
+    session: req.session,
+  });
 });
 
 // Login submit

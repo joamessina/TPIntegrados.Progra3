@@ -15,6 +15,7 @@
         <th>Tipo</th>
         <th>Expansión</th>
         <th>Precio</th>
+        <th>Stock</th>
         <th>Activo</th>
         <th>Imagen</th>
         <th>Acciones</th>
@@ -28,6 +29,7 @@
           <td><%= p.tipo %></td>
           <td><%= p.expansion %></td>
           <td>$<%= p.precio %></td>
+          <td><%= p.stock %></td>
           <td>
             <% if (p.activo) { %>
               <span class="badge bg-success">Sí</span>
