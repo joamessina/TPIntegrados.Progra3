@@ -9,6 +9,7 @@ const productosRouter = require('./routes/productos');
 const adminRouter = require('./routes/admin');
 const authRoutes = require('./routes/auth');
 const session = require('express-session');
+const comprasRouter = require('./routes/compras');
 
 require('./models/associations');
 
@@ -57,6 +58,7 @@ app.use('/admin', adminRouter);
 // Rutas API
 app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRouter);
+app.use('/api/compras', comprasRouter);
 
 // WebSockets
 io.on('connection', (socket) => {

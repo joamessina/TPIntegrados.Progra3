@@ -9,6 +9,16 @@ const VentaProducto = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    ventaId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'venta_id',
+    },
+    productoId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'producto_id',
+    },
     cantidad: {
       type: DataTypes.INTEGER,
       allowNull: false,
