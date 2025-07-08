@@ -4,14 +4,7 @@ const ExcelJS = require('exceljs');
 const Producto = require('../models/Producto');
 const requireAdmin = require('../middlewares/requireAdmin');
 const Usuario = require('../models/Usuario');
-const { Ventas, VentaProducto } = require('../models');
-
-// Middleware de auth test, resta mejorar desp
-router.use((req, res, next) => {
-  // Acá validar la sesión del admin
-  // Por ahora, vista ciega
-  next();
-});
+const { Ventas, VentaProducto } = require('../db/database');
 
 // Dashboard: lista de productos
 router.get('/dashboard', requireAdmin, async (req, res) => {

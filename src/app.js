@@ -4,14 +4,14 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
-const { sequelize } = require('./models');
+const { sequelize } = require('./db/database');
 const productosRouter = require('./routes/productos');
 const adminRouter = require('./routes/admin');
 const authRoutes = require('./routes/auth');
 const session = require('express-session');
 const comprasRouter = require('./routes/compras');
 
-require('./models/associations');
+require('./db/associations');
 
 const app = express();
 const server = http.createServer(app);
@@ -52,6 +52,11 @@ app.use(
     },
   })
 );
+
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
 
 // Rutas HTML/EJS
 app.use('/admin', adminRouter);

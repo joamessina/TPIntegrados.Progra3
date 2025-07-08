@@ -1,20 +1,16 @@
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./db/users.db');
+require('dotenv').config();
 
-function initDB() {
-    db.serialize(() => {
-        db.run(`CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE,
-            password TEXT
-        )`);
+const { Sequelize } = require('sequelize');
 
-        // Usuario precargado: admin / 1234
-        db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, ['admin', '1234']);
-    });
-}
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    logging: false,
+  }
+);
 
-module.exports = {
-    db,
-    initDB
-};
+module.exports = { sequelize };

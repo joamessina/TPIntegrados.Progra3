@@ -1,6 +1,6 @@
-const Producto = require('./Producto');
-const Venta = require('./Ventas');
-const VentaProducto = require('./VentaProducto');
+const Producto = require('../models/Producto');
+const Venta = require('../models/Ventas');
+const VentaProducto = require('../models/VentaProducto');
 
 // Venta <-> Producto (many-to-many) mediante VentaProducto
 Venta.belongsToMany(Producto, {
