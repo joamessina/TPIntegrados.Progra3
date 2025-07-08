@@ -28,7 +28,8 @@ router.get('/productos/nuevo', (req, res) => {
 // Crear producto
 router.post('/productos/nuevo', async (req, res) => {
   try {
-    const { nombre, descripcion, tipo, expansion, precio, imagen } = req.body;
+    const { nombre, descripcion, tipo, expansion, precio, imagen, stock } =
+      req.body;
     await Producto.create({
       nombre,
       descripcion,
@@ -36,6 +37,7 @@ router.post('/productos/nuevo', async (req, res) => {
       expansion,
       precio,
       imagen,
+      stock,
     });
     res.redirect('/admin/dashboard');
   } catch (err) {
@@ -64,8 +66,17 @@ router.post('/productos/:id/editar', async (req, res) => {
   const producto = await Producto.findByPk(req.params.id);
   if (!producto) return res.redirect('/admin/dashboard');
   try {
-    const { nombre, descripcion, tipo, expansion, precio, imagen } = req.body;
-    let updateData = { nombre, descripcion, tipo, expansion, precio, imagen };
+    const { nombre, descripcion, tipo, expansion, precio, imagen, stock } =
+      req.body;
+    let updateData = {
+      nombre,
+      descripcion,
+      tipo,
+      expansion,
+      precio,
+      imagen,
+      stock,
+    };
     await producto.update(updateData);
     res.redirect('/admin/dashboard');
   } catch (err) {
