@@ -43,9 +43,17 @@
     const imgSrc = p.imagen
       ? (p.imagen.startsWith('http') ? p.imagen : `/images/${p.imagen}`)
       : 'https://static.wikia.nocookie.net/4edf6693-39d6-4d5c-b426-59f4a9e6c382/scale-to-width/755';
+    const placeholderImg = 'https://static.wikia.nocookie.net/4edf6693-39d6-4d5c-b426-59f4a9e6c382/scale-to-width/755';
   %>
-  <img src="<%= imgSrc %>" alt="Imagen" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+  <img 
+    src="<%= imgSrc %>" 
+    alt="Imagen" 
+    class="img-thumbnail" 
+    style="max-width: 100px; max-height: 100px;"
+    onerror="this.onerror=null;this.src='<%= placeholderImg %>';"
+  >
 </td>
+
           <td>
   <a href="/admin/productos/<%= p.id %>/editar" class="btn btn-sm btn-warning me-1 mb-1">Editar</a>
   <% if (p.activo) { %>
