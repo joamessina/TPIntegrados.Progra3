@@ -39,6 +39,8 @@ router.post('/productos/nuevo', async (req, res) => {
       imagen,
       stock,
     });
+    const { io } = require('../app');
+    io.emit('productos-updated');
     res.redirect('/admin/dashboard');
   } catch (err) {
     res.render('admin/producto_form', {
@@ -78,6 +80,8 @@ router.post('/productos/:id/editar', async (req, res) => {
       stock,
     };
     await producto.update(updateData);
+    const { io } = require('../app');
+    io.emit('productos-updated');
     res.redirect('/admin/dashboard');
   } catch (err) {
     res.render('admin/producto_form', {
